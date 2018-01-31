@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -7,20 +9,19 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/ofs_test')
-const db = mongoose.connection;
+const tezaDb = mongoose.connection;
 
 // Check DB connection
-db.once('open', () => {
+tezaDb.once('open', () => {
   console.log("Connected to MongoDB");
 });
 
 // Check DB errors
-db.on('error', (err) => {
+tezaDb.on('error', (err) => {
   console.log(err);
 });
 
 const index = require('./routes/index');
-const articles = require('./routes/articles');
 
 const app = express();
 
@@ -28,8 +29,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,7 +37,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/articles', articles);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
