@@ -2,14 +2,14 @@
 
 ## Endpoints
 
-- `POST /_endpoints/add/<endpoint-name>`
+- `POST /_endpoints/<endpoint-name>`
 	Adds a new endpoint
-- `POST /_endpoints/edit/<endpoint-name>`
+- `POST /_endpoints/<endpoint-name>/edit`
 	Edits an endpoint (new endpoint name is received as "name" in request body (see schema below)).
-- `POST /_endpoints/remove/<endpoint-name>`
+- `DELETE /_endpoints/<endpoint-name>`
 	Removes an endpoint
-- `POST /_endpoints/deprecate/<version-number>`
-	Deprecates a version number and sends a "version currently deprecated" response with status 403.
+- `POST /_endpoints/<version-number>/retire`
+	Retires a version number and on future requests to the API sends a "version currently deprecated" response with status 410.
 - `GET /_endpoints`
 	Lists all endpoints
 
@@ -20,9 +20,9 @@
 
 ## Endpoint schema
 
-`POST /_endpoints/add` request should contain the following request body along with a bearer token.
+`POST /_endpoint` request should contain the following request body along with a bearer token.
 
-```javascript
+```JSON
 {
 	name: {
 		type: String,
@@ -49,20 +49,10 @@
 
 ## Created endpoints
 
-### `/_endpoints/add/<endpoint-name>`
+### `POST /_endpoints/<endpoint-name>`
 
 - `GET /<endpoint-name>`
 - `GET /<endpoint-name>/<id>`
-- `POST /<endpoint-name>/add`
-- `POST /<endpoint-name>/edit/<id>`
-- `POST /<endpoint-name>/delete/<id>`
-
-## Examples:
-
-- `POST /_endpoints/add/articles`
-- `GET /articles`
-- `POST /articles/add`
-- `GET /articles/1`
-- `POST /articles/add`
-- `POST /articles/edit/1`
-- `POST /articles/delete/1`
+- `POST /<endpoint-name>`
+- `POST /<endpoint-name>/<id>/edit`
+- `DELETE /<endpoint-name>/<id>`
