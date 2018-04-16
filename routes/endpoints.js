@@ -1,31 +1,42 @@
 const express = require('express');
 
-// Bring in models
-const Endpoint = require('../models/endpoint');
+const messages = require('../utils/messageHandler');
 
 const router = express.Router();
 
-router.post('/:option/:value', (req, res, next) => {
-	option = req.params.option;
-	value = req.params.value;
-	switch(option) {
-		case 'add': console.log('ADD detected'); break;
-		case 'remove': console.log('REMOVE detected'); break;
-		case 'deprecate': console.log('DEPRECATE detected'); break;
-		default: console.log('Error in /endpoints');
-	};
-	res.end(option);
-});
+// Bring in models
+const Endpoint = require('../models/endpoints');
 
-/* GET list of endpoints. */
-router.get('/', (req, res, next) => {
-	Endpoint.find({}, (err, endpoints) => {
-		if(err) console.log(err);
-		res.json({
-			title: "Endpoints",
-			endpoints: endpoints
-		});
+const endPoints = (tezaDb) => {
+
+	// LIST all endpoints
+	router.get('/', (req, res) => {
+
 	});
-});
 
-module.exports = router;
+	// CREATE endpoint route
+	router.post('/', (req, res) => {
+		const { body } = req;
+
+		const newEndpoint = new Endpoint(body)
+
+		newEndpoint.save((err, newEndpoint) => {
+			if(err) messages.sendErr(res, 500, 'Error saving endpoint');
+			else res.json(newEndpoint.model)
+		})
+	});
+
+	// DELETE endpoint route
+	router.delete('/:name', (req, res) => {
+		const { name } = req.params;
+	});
+
+	// EDIT endpoint route
+	router.post('/:name/:option', (req, res) => {
+		const { name, option } = req.params;
+	});
+
+	return router;
+};
+
+module.exports = endPoints;

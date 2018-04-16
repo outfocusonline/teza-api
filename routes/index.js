@@ -4,24 +4,30 @@ const express = require('express');
 
 const endpoints = require('./endpoints');
 const purgeAll = require('./purgeAll');
-const collectionExists = require('../utils/collectionExists')
-
+const collectionExists = require('../utils/listCollections');
 const router = express.Router();
 
-router.use('/_endpoints', endpoints);
+const createRoutes = tezaDb => {
+	// Call endpoints router
+	router.use('/_endpoints', endpoints(tezaDb));
 
-router.use('/_purge_all', purgeAll);
+	// Check for a created collection
+	router.get('/:post', function (req, res, next) {
+		if (collectionExists(req.params.post)) {
+			return res.end("Well done, I'm surprised");
+		};
+		const err = new Error('Not found');
+		err.status = 404;
+		return next(err);
+	})
+	/* If no other patterns match, GET home page. */
+	router.get('/', function (req, res, next) {
+		res.render('index', {
+			title: 'Teza'
+		});
+	});
 
-router.get('/:post', function(req, res, next) {
-	if (collectionExists(req.params.post)) res.end("Well done, I'm surprised");
-	const err = new Error('Not found');
-	err.status = 404
-	next(err)
-})
+	return router;
+}
 
-/* If no other patterns match, GET home page. */
-router.get('/', function(req, res, next) {
-	res.render('index', { title: 'Teza' });
-});
-
-module.exports = router;
+module.exports = createRoutes;
