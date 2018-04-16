@@ -2,18 +2,14 @@
 
 const mongoose = require('mongoose');
 
-const endpointSchema = mongoose.Schema({
+const endpointsSchema = mongoose.Schema({
 	name: {
 		type: String,
 		required: true
 	},
 	model: {
-		type: Object,
+		type: String,
 		required: true
-	},
-	isUser: {
-		type: Boolean,
-		required: false
 	},
 	version: {
 		type: Number,
@@ -22,7 +18,16 @@ const endpointSchema = mongoose.Schema({
 	authenticated: {
 		type: Boolean,
 		required: false
+	},
+	deleted: {
+		type: Boolean,
+		required: false,
+		default: false
+	},
+	deletedAt: {
+		type: Date,
+		required: false
 	}
 });
 
-module.exports = mongoose.model('Endpoint', endpointSchema);
+module.exports = mongoose.model('Endpoints', endpointsSchema);
